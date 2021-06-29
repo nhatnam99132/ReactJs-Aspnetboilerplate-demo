@@ -11,6 +11,8 @@ const rules = {
       message: 'The input is not valid E-mail!',
     },
   ],
+  address: [{ required: true, message: L('ThisFieldIsRequired') }],
+  birthdate: [{ required: true, message: L('ThisFieldIsRequired') }],
 };
 
 export default rules;

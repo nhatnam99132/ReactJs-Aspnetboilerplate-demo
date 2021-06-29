@@ -40,6 +40,15 @@ export const appRouters: any = [
     component: LoadableComponent(() => import('../../scenes/Dashboard')),
   },
   {
+    path: '/product',
+    permission: '',
+    name: 'product',
+    title: 'Product',
+    icon: HomeOutlined,
+    showInMenu: true,
+    component: LoadableComponent(() => import('../../scenes/Products')),
+  },
+  {
     path: '/users',
     permission: 'Pages.Users',
     title: 'Users',

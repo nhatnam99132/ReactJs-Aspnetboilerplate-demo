@@ -4,39 +4,39 @@ import { Button, Card, Col, Dropdown, Input, Menu, Modal, Row, Table, Tag } from
 import { inject, observer } from 'mobx-react';
 
 import AppComponentBase from '../../components/AppComponentBase';
-import CreateOrUpdateUser from './components/createOrUpdateUser';
+import CreateOrUpdateProduct from './components/createOrUpdateProduct';
 import { EntityDto } from '../../services/dto/entityDto';
 import { L } from '../../lib/abpUtility';
 import Stores from '../../stores/storeIdentifier';
-import UserStore from '../../stores/userStore';
+import ProductStore from '../../stores/productStore';
 import { FormInstance } from 'antd/lib/form';
 import { PlusOutlined, SettingOutlined } from '@ant-design/icons';
 
-export interface IUserProps {
-  userStore: UserStore;
+export interface IProductProps {
+  productStore: ProductStore;
 }
 
-export interface IUserState {
+export interface IProductState {
   modalVisible: boolean;
   maxResultCount: number;
   skipCount: number;
-  userId: number;
+  productId: number;
   filter: string;
 }
 
 const confirm = Modal.confirm;
 const Search = Input.Search;
 
-@inject(Stores.UserStore)
+@inject(Stores.ProductStore)
 @observer
-class User extends AppComponentBase<IUserProps, IUserState> {
+class Product extends AppComponentBase<IProductProps, IProductState> {
   formRef = React.createRef<FormInstance>();
 
   state = {
     modalVisible: false,
     maxResultCount: 10,
     skipCount: 0,
-    userId: 0,
+    productId: 0,
     filter: '',
   };
 
@@ -45,7 +45,7 @@ class User extends AppComponentBase<IUserProps, IUserState> {
   }
 
   async getAll() {
-    await this.props.userStore.getAll({ maxResultCount: this.state.maxResultCount, skipCount: this.state.skipCount, keyword: this.state.filter });
+    await this.props.productStore.getAll({ maxResultCount: this.state.maxResultCount, skipCount: this.state.skipCount, keyword: this.state.filter });
   }
 
   handleTableChange = (pagination: any) => {
@@ -60,18 +60,18 @@ class User extends AppComponentBase<IUserProps, IUserState> {
 
   async createOrUpdateModalOpen(entityDto: EntityDto) {
     if (entityDto.id === 0) {
-      await this.props.userStore.createUser();
-      await this.props.userStore.getRoles();
+      await this.props.productStore.createProduct();
+      await this.props.productStore.getRoles();
     } else {
-      await this.props.userStore.get(entityDto);
-      await this.props.userStore.getRoles();
+      await this.props.productStore.get(entityDto);
+      await this.props.productStore.getRoles();
     }
 
-    this.setState({ userId: entityDto.id });
+    this.setState({ productId: entityDto.id });
     this.Modal();
 
     setTimeout(() => {
-      this.formRef.current?.setFieldsValue({ ...this.props.userStore.editUser });
+      this.formRef.current?.setFieldsValue({ ...this.props.productStore.editProduct });
     }, 100);
   }
 
@@ -80,7 +80,7 @@ class User extends AppComponentBase<IUserProps, IUserState> {
     confirm({
       title: 'Do you Want to delete these items?',
       onOk() {
-        self.props.userStore.delete(input);
+        self.props.productStore.delete(input);
       },
       onCancel() {
         console.log('Cancel');
@@ -92,10 +92,10 @@ class User extends AppComponentBase<IUserProps, IUserState> {
     const form = this.formRef.current;
 
     form!.validateFields().then(async (values: any) => {
-      if (this.state.userId === 0) {
-        await this.props.userStore.create(values);
+      if (this.state.productId === 0) {
+        await this.props.productStore.create(values);
       } else {
-        await this.props.userStore.update({ ...values, id: this.state.userId });
+        await this.props.productStore.update({ ...values, id: this.state.productId });
       }
 
       await this.getAll();
@@ -109,11 +109,11 @@ class User extends AppComponentBase<IUserProps, IUserState> {
   };
 
   public render() {
-    const { users } = this.props.userStore;
+    const { products } = this.props.productStore;
     const columns = [
-      { title: L('UserName'), dataIndex: 'userName', key: 'userName', width: 150, render: (text: string) => <div>{text}</div> },
-      { title: L('FullName'), dataIndex: 'name', key: 'name', width: 150, render: (text: string) => <div>{text}</div> },
-      { title: L('EmailAddress'), dataIndex: 'emailAddress', key: 'emailAddress', width: 150, render: (text: string) => <div>{text}</div> },
+      //{ title: L('ProductName'), dataIndex: 'productName', key: 'productName', width: 150, render: (text: string) => <div>{text}</div> },
+      { title: L('ProductName'), dataIndex: 'name', key: 'name', width: 150, render: (text: string) => <div>{text}</div> },
+      { title: L('Quantity'), dataIndex: 'quantity', key: 'quantity', width: 150, render: (text: number) => <div>{text}</div> },
       {
         title: L('IsActive'),
         dataIndex: 'isActive',
@@ -157,7 +157,7 @@ class User extends AppComponentBase<IUserProps, IUserState> {
             xxl={{ span: 2, offset: 0 }}
           >
             {' '}
-            <h2>{L('Users')}</h2>
+            <h2>{L('Products')}</h2>
           </Col>
           <Col
             xs={{ span: 14, offset: 0 }}
@@ -188,14 +188,14 @@ class User extends AppComponentBase<IUserProps, IUserState> {
               rowKey={(record) => record.id.toString()}
               bordered={true}
               columns={columns}
-              pagination={{ pageSize: 10, total: users === undefined ? 0 : users.totalCount, defaultCurrent: 1 }}
-              loading={users === undefined ? true : false}
-              dataSource={users === undefined ? [] : users.items}
+              pagination={{ pageSize: 10, total: products === undefined ? 0 : products.totalCount, defaultCurrent: 1 }}
+              loading={products === undefined ? true : false}
+              dataSource={products === undefined ? [] : products.items}
               onChange={this.handleTableChange}
             />
           </Col>
         </Row>
-        <CreateOrUpdateUser
+        <CreateOrUpdateProduct
           formRef={this.formRef}
           visible={this.state.modalVisible}
           onCancel={() => {
@@ -204,13 +204,13 @@ class User extends AppComponentBase<IUserProps, IUserState> {
             });
             this.formRef.current?.resetFields();
           }}
-          modalType={this.state.userId === 0 ? 'edit' : 'create'}
+          modalType={this.state.productId === 0 ? 'edit' : 'create'}
           onCreate={this.handleCreate}
-          roles={this.props.userStore.roles}
+          roles={this.props.productStore.roles}
         />
       </Card>
     );
   }
 }
 
-export default User;
+export default Product;

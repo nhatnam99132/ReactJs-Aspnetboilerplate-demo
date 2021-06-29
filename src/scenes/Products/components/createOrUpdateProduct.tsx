@@ -3,12 +3,12 @@ import * as React from 'react';
 import { Checkbox, Input, Modal, Tabs, Form } from 'antd';
 import { GetRoles } from '../../../services/user/dto/getRolesOuput';
 import { L } from '../../../lib/abpUtility';
-import rules from './createOrUpdateUser.validation';
+import rules from './createOrUpdateProduct.validation';
 import { FormInstance } from 'antd/lib/form';
 
 const TabPane = Tabs.TabPane;
 
-export interface ICreateOrUpdateUserProps {
+export interface ICreateOrUpdateProductProps {
   visible: boolean;
   onCancel: () => void;
   modalType: string;
@@ -17,33 +17,33 @@ export interface ICreateOrUpdateUserProps {
   formRef: React.RefObject<FormInstance>;
 }
 
-class CreateOrUpdateUser extends React.Component<ICreateOrUpdateUserProps> {
+class CreateOrUpdateProduct extends React.Component<ICreateOrUpdateProductProps> {
   state = {
     confirmDirty: false,
   };
 
-  compareToFirstPassword = (rule: any, value: any, callback: any) => {
-    const form = this.props.formRef.current;
+  // compareToFirstPassword = (rule: any, value: any, callback: any) => {
+  //   const form = this.props.formRef.current;
     
-    if (value && value !== form!.getFieldValue('password')) {
-      return Promise.reject('Two passwords that you enter is inconsistent!');
-    }
-    return Promise.resolve();
-  };
+  //   if (value && value !== form!.getFieldValue('password')) {
+  //     return Promise.reject('Two passwords that you enter is inconsistent!');
+  //   }
+  //   return Promise.resolve();
+  // };
 
-  validateToNextPassword = (rule: any, value: any, callback: any) => {
-    const { validateFields, getFieldValue } = this.props.formRef.current!;
+  // validateToNextPassword = (rule: any, value: any, callback: any) => {
+  //   const { validateFields, getFieldValue } = this.props.formRef.current!;
 
-    this.setState({
-      confirmDirty: true,
-    });
+  //   this.setState({
+  //     confirmDirty: true,
+  //   });
 
-    if (value && this.state.confirmDirty && getFieldValue('confirm')) {
-      validateFields(['confirm']);
-    }
+  //   if (value && this.state.confirmDirty && getFieldValue('confirm')) {
+  //     validateFields(['confirm']);
+  //   }
 
-    return Promise.resolve();
-  };
+  //   return Promise.resolve();
+  // };
 
   render() {
     const { roles } = this.props;
@@ -93,23 +93,23 @@ class CreateOrUpdateUser extends React.Component<ICreateOrUpdateUserProps> {
     });
 
     return (
-      <Modal visible={visible} cancelText={L('Cancel')} okText={L('OK')} onCancel={onCancel} onOk={onCreate} title={'User'} destroyOnClose={true}>
+      <Modal visible={visible} cancelText={L('Cancel')} okText={L('OK')} onCancel={onCancel} onOk={onCreate} title={'Product'} destroyOnClose={true}>
         <Form ref={this.props.formRef}>
-          <Tabs defaultActiveKey={'userInfo'} size={'small'} tabBarGutter={64}>
-            <TabPane tab={'User'} key={'userInfo'}>
+          <Tabs defaultActiveKey={'productInfo'} size={'small'} tabBarGutter={64}>
+            <TabPane tab={'Product'} key={'productInfo'}>
               <Form.Item label={L('Name')} {...formItemLayout} name={'name'} rules={rules.name}>
                 <Input />
               </Form.Item>
-              <Form.Item label={L('Surname')} {...formItemLayout} name={'surname'} rules={rules.surname}>
+              <Form.Item label={L('Quantity')} {...formItemLayout} name={'quantity'} rules={rules.quantity}>
                 <Input />
               </Form.Item>
-              <Form.Item label={L('UserName')} {...formItemLayout} name={'userName'} rules={rules.userName}>
+              {/* <Form.Item label={L('ProductName')} {...formItemLayout} name={'productName'} rules={rules.productName}>
                 <Input />
               </Form.Item>
               <Form.Item label={L('Email')} {...formItemLayout} name={'emailAddress'} rules={rules.emailAddress as []}>
                 <Input />
-              </Form.Item>
-              {this.props.modalType === 'edit' ? (
+              </Form.Item> */}
+              {/* {this.props.modalType === 'edit' ? (
                 <Form.Item
                   label={L('Password')}
                   {...formItemLayout}
@@ -144,7 +144,7 @@ class CreateOrUpdateUser extends React.Component<ICreateOrUpdateUserProps> {
                 >
                   <Input type="password" />
                 </Form.Item>
-              ) : null}
+              ) : null} */}
               <Form.Item label={L('IsActive')} {...tailFormItemLayout} name={'isActive'} valuePropName={'checked'}>
                 <Checkbox>Aktif</Checkbox>
               </Form.Item>
@@ -161,4 +161,4 @@ class CreateOrUpdateUser extends React.Component<ICreateOrUpdateUserProps> {
   }
 }
 
-export default CreateOrUpdateUser;
+export default CreateOrUpdateProduct;
